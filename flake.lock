@@ -1,0 +1,106 @@
+{
+  "nodes": {
+    "devshell": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1678957337,
+        "narHash": "sha256-Gw4nVbuKRdTwPngeOZQOzH/IFowmz4LryMPDiJN/ah4=",
+        "owner": "numtide",
+        "repo": "devshell",
+        "rev": "3e0e60ab37cd0bf7ab59888f5c32499d851edb47",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "devshell",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1678901627,
+        "narHash": "sha256-U02riOqrKKzwjsxc/400XnElV+UtPUQWpANPlyazjH0=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "93a2b84fc4b70d9e089d029deacc3583435c2ed6",
+        "type": "github"
+      },
+      "original": {
+        "id": "flake-utils",
+        "type": "indirect"
+      }
+    },
+    "gomod2nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "utils": [
+          "flake-utils"
+        ]
+      },
+      "locked": {
+        "lastModified": 1662095654,
+        "narHash": "sha256-v2WMKnkpkz5YLYTBwh0NVgi3Xl4En249LCdrKTA4Nek=",
+        "owner": "nix-community",
+        "repo": "gomod2nix",
+        "rev": "cc75990c60d01d9eedcf32ff4bf0055dd49c3ea1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "v1.5.0",
+        "repo": "gomod2nix",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1677543769,
+        "narHash": "sha256-LwbqS8vGisXl2WHpK9r5+kodr0zoIT8F2YB0R4y1TsA=",
+        "path": "/nix/store/wfkbwsdznk85n45bzb8zp2z1awvj5cr2-source",
+        "rev": "b26d52c9feb6476580016e78935cbf96eb3e2115",
+        "type": "path"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "okta-aws-cli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1680529875,
+        "narHash": "sha256-Grh5aClgJsPCCgu7ohWuTLAPzIA7zplwuvhG4DD0FEE=",
+        "owner": "daniel-sampliner",
+        "repo": "okta-aws-cli",
+        "rev": "7cc9dd3e4b382c982e1eae3efdb53a5206e2b213",
+        "type": "github"
+      },
+      "original": {
+        "owner": "daniel-sampliner",
+        "ref": "all-profiles",
+        "repo": "okta-aws-cli",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "devshell": "devshell",
+        "flake-utils": "flake-utils",
+        "gomod2nix": "gomod2nix",
+        "nixpkgs": "nixpkgs",
+        "okta-aws-cli": "okta-aws-cli"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
