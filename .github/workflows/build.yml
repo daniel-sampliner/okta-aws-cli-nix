@@ -14,7 +14,7 @@ jobs:
       - uses: actions/cache@v3
         id: nix-cache
         with:
-          path: ${{ env.RUNNER_TEMP }}/nix-cache
+          path: ${{ vars.RUNNER_TEMP }}/nix-cache
           key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}
 
       - name: Save signing key secret to file
@@ -25,7 +25,7 @@ jobs:
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
-            secret-key-files = ${{ env.RUNNER_TEMP }}/nix-private-key
+            secret-key-files = ${{ vars.RUNNER_TEMP }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
       - name: Import Nix store cache
