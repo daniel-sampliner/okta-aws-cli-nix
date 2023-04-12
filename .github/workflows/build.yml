@@ -28,8 +28,6 @@ jobs:
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
-      - run: sudo $(command -v nix) store repair --all
-
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
         run: nix copy --derivation --from ${{ runner.temp }}/nix-cache .
