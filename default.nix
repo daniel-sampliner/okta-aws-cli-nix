@@ -35,6 +35,4 @@ buildGoApplication {
     "$GOPATH"/bin/okta-aws-cli --version \
       | grep -q -- '^okta-aws-cli version .*-g${shortRev}$'
   '';
-
-  NIX_DEBUG=0;
 }
