@@ -1,2 +1,2 @@
 #!/bin/sh
-printf '%s\n' "$OUT_PATHS" >"${0%/*}/built_paths"
+printf '%s\n' "$OUT_PATHS" >>"${0%/*}/built_paths"
