@@ -28,6 +28,8 @@ jobs:
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
+      - run: pstree -pas $(pgrep -fa nix)
+
       - run: nix -L build
 
       - name: Sanity Check
@@ -39,4 +41,4 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
-          xargs sudo $(command -v nix) copy --to file://${{ runner.temp }}/nix-cache <'${{ github.workspace }}/.github/built_paths'
+          xargs -t sudo $(command -v nix) copy --to file://${{ runner.temp }}/nix-cache <'${{ github.workspace }}/.github/built_paths'
