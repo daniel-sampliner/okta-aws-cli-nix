@@ -1,12 +1,11 @@
 #!/bin/sh
-set -x
-
 set -eu
 
 cache_location_file=${0%/*}/cache_location
 if ! [ -f "$cache_location_file" ]; then
 	exit 0
 fi
+
 read -r cache <"$cache_location_file"
 if [ -z "$cache" ]; then
 	exit 0
