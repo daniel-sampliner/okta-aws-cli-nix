@@ -11,6 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/cache@v3
+        id: nix-cache
+        with:
+          path: /tmp/nix-cache
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}
+
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
@@ -22,9 +28,17 @@ jobs:
             secret-key-files = /tmp/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
+      - name: Import Nix store cache
+        if: steps.nix-cache.outputs.cache-hit == 'true'
+        run: nix copy --from /tmp/nix-cache .
+
       - run: nix -L build
 
       - name: Sanity Check
         run: |
           ./result/bin/okta-aws-cli --help 2>&1 \
             | grep -wF -- '--all-profiles'
+
+      - name: Export Nix store cache
+        if: steps.nix-cache.outputs.cache-hit != 'true'
+        run: nix copy --to /tmp/nix-cache .
