@@ -8,29 +8,31 @@ jobs:
           - ubuntu-latest
           - macos-latest
     runs-on: ${{ matrix.os }}
+    env:
+      RUNNER_TEMP: ${{ runner.temp }}
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         id: nix-cache
         with:
-          path: ./nix-cache
+          path: ${{ runner.temp }}/nix-cache
           key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}
 
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
-        run: printf '%s\n' "$NIX_PRIVATE_KEY" > /tmp/nix-private-key
+        run: printf '%s\n' "$NIX_PRIVATE_KEY" > "$RUNNER_TEMP"/nix-private-key
 
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
-            secret-key-files = /tmp/nix-private-key
+            secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
-        run: nix copy --from ./nix-cache .
+        run: nix copy --from "$RUNNER_TEMP"/nix-cache .
 
       - run: nix -L build
 
@@ -43,4 +45,4 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
-          nix copy --to ./nix-cache .
+          nix copy --to "$RUNNER_TEMP"/nix-cache .
