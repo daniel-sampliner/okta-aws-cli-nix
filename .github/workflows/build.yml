@@ -5,6 +5,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v20
-      - run: nix registry list | grep nixpkgs
-      - run: nix registry add nixpkgs github:nixos/nixpkgs/nixos-22.11
-      - run: nix registry list | grep nixpkgs
+      - run: nix -L build
+      - run: file result/bin/okta-aws-cli
