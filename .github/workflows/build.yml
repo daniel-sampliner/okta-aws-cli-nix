@@ -40,21 +40,21 @@ jobs:
           ./result/bin/okta-aws-cli --help 2>&1 \
             | grep -wF -- '--all-profiles'
 
-      - name: Resolve Nix dependencies
+      - name: Resolve go dependencies
+        if: steps.nix-cache.outputs.cache-hit != 'true' || steps.go-cache.outputs.cache-hit != 'true'
         run: |
-          sudo $(command -v nix) store repair -r . \
-            && nix path-info -r --derivation . | grep -v '\.drv' | sort >all_deps.txt \
-            && nix path-info -r .#packages.$(nix eval --impure --expr 'builtins.currentSystem').default.passthru.vendorEnv | sort >go_deps.txt
+          nix path-info -r .#packages.$(nix eval --impure --expr 'builtins.currentSystem').default.passthru.vendorEnv \
+            | sort >go_deps.txt
 
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          ls -al ${{ runner.temp }}/nix-cache &&
-          ls -al ${{ runner.temp }}/go-cache &&
+          sudo $(command -v nix) store repair -r .
+          nix path-info -r --derivation . | grep -v '\.drv' | sort >all_deps.txt
           comm -23 all_deps.txt go_deps.txt \
-            | xargs nix copy --to file://${{ runner.temp }}/nix-cache
+            | xargs sudo $(command -v nix) copy --to file://${{ runner.temp }}/nix-cache
 
       - name: Copy go dependencies to cache
         if: steps.go-cache.outputs.cache-hit != 'true'
         run: |
-          xargs nix copy --to file://${{ runner.temp }}/go-cache <go_deps.txt
+          xargs sudo $(command -v nix) copy --to file://${{ runner.temp }}/go-cache <go_deps.txt
