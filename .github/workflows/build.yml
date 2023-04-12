@@ -22,9 +22,7 @@ jobs:
         run: printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
 
       - name: Save signing key secret to file
-        env:
-          NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
-        run: printf '%s\n' "$NIX_PRIVATE_KEY" >${{ runner.temp }}/nix-private-key
+        run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >${{ runner.temp }}/nix-private-key
 
       - uses: cachix/install-nix-action@v20
         with:
@@ -36,6 +34,8 @@ jobs:
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
         run: nix copy --derivation --from ${{ runner.temp }}/nix-cache .
+
+      - run: command -v nix && false
 
       - run: ls -al ${{ runner.temp }}/nix-cache || true
       - run: nix -L build
