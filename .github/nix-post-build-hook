@@ -1,22 +1,7 @@
 #!/bin/sh
 set -eu
-
-cache_location_file=${0%/*}/cache_location
-if ! [ -f "$cache_location_file" ]; then
-	exit 0
-fi
-
-read -r cache <"$cache_location_file"
-if [ -z "$cache" ]; then
-	exit 0
-fi
-
 set -f
 export IFS=' '
-export PATH="/nix/var/nix/profiles/default/bin:$PATH"
 
 # shellcheck disable=SC2086
-if ! nix copy --to "$cache" $OUT_PATHS; then
-	nix store repair -r $OUT_PATHS \
-		&& nix copy --to "$cache" $OUT_PATHS
-fi
+printf '%s\n' $OUT_PATHS >"${0%/*}/built_paths"
