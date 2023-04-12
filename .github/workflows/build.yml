@@ -49,6 +49,8 @@ jobs:
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
+          ls -al ${{ runner.temp }}/nix-cache &&
+          ls -al ${{ runner.temp }}/go-cache &&
           comm -23 all_deps.txt go_deps.txt \
             | xargs nix copy --to file://${{ runner.temp }}/nix-cache
 
