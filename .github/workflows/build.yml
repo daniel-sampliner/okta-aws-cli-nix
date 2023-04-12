@@ -39,8 +39,7 @@ jobs:
             sudo systemctl restart nix-daemon
             ;;
           macOS)
-            sudo launchctl stop org.nixos.nix-daemon
-            sudo launchctl start org.nixos.nix-daemon
+            sudo launchctl kickstart -k org.nixos.nix-daemon
             ;;
           *)
             printf 'unknown OS: %s\n' '${{ runner.os }}' >&2
