@@ -15,7 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}-1
 
       - name: Save signing key secret to file
         env:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
-        run: nix copy --from ${{ runner.temp }}/nix-cache .
+        run: nix copy --derivation --from ${{ runner.temp }}/nix-cache .
 
       - run: nix -L build
 
@@ -43,4 +43,4 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
-          nix copy --to ${{runner.temp }}/nix-cache .
+          nix copy --derivation --to ${{runner.temp }}/nix-cache .
