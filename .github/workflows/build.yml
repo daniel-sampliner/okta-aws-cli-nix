@@ -15,7 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}-2
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}-4
 
       - uses: actions/cache@v3
         id: go-cache
