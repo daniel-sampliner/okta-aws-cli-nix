@@ -50,9 +50,9 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           comm -23 all_deps.txt go_deps.txt \
-            | xargs nix copy --to file://${ runner.temp }}/nix-cache
+            | xargs nix copy --to file://${{ runner.temp }}/nix-cache
 
       - name: Copy go dependencies to cache
         if: steps.go-cache.outputs.cache-hit != 'true'
         run: |
-          xargs nix copy --to file://${ runner.temp }}/go-cache <go_deps.txt
+          xargs nix copy --to file://${{ runner.temp }}/go-cache <go_deps.txt
