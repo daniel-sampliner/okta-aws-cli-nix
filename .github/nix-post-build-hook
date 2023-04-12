@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+cache_location_file=${0%/*}/cache_location
+if ! [ -f "$cache_location_file" ]; then
+	exit 0
+fi
+read -r cache <"$cache_location_file"
+if [ -z "$cache" ]; then
+	exit 0
+fi
+
+set -f
+export IFS=' '
+
+# shellcheck disable=SC2086
+exec nix copy --to "$cache" $OUT_PATHS
