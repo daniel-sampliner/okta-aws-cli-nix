@@ -20,7 +20,7 @@ jobs:
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
-        run: printf '%s\n' "$NIX_PRIVATE_KEY" > ${{ runner.temp }}/nix-private-key
+        run: printf '%s\n' "$NIX_PRIVATE_KEY" >${{ runner.temp }}/nix-private-key
 
       - uses: cachix/install-nix-action@v20
         with:
@@ -35,15 +35,9 @@ jobs:
       - name: Configure Nix post-build hook
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          set -x &&
-          declare -p GITHUB_WORKSPACE &&
           printf 'post-build-hook = %s\n' "$GITHUB_WORKSPACE"/.github/nix-post-build-hook \
-            | sudo tee -a /etc/nix/nix.conf \
+            | sudo tee -a /etc/nix/nix.conf >/dev/null \
           && printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
-
-      - run: tail -n+0 /etc/nix/nix.conf "$GITHUB_WORKSPACE"/.github/cache_location
-
-      - run: false
 
       - run: nix -L build
 
