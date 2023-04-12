@@ -15,13 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}-4
-
-      - uses: actions/cache@v3
-        id: go-cache
-        with:
-          path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./gomod2nix.toml') }}
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}
 
       - name: Save signing key secret to file
         run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >'${{ runner.temp }}/nix-private-key'
@@ -29,7 +23,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
-            extra-substituters = file://${{ runner.temp }}/nix-cache file://${{ runner.temp }}/go-cache
+            extra-substituters = file://${{ runner.temp }}/nix-cache
+            post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
@@ -40,21 +35,8 @@ jobs:
           ./result/bin/okta-aws-cli --help 2>&1 \
             | grep -wF -- '--all-profiles'
 
-      - name: Resolve go dependencies
-        if: steps.nix-cache.outputs.cache-hit != 'true' || steps.go-cache.outputs.cache-hit != 'true'
-        run: |
-          nix path-info -r .#packages.$(nix eval --impure --expr 'builtins.currentSystem').default.passthru.vendorEnv \
-            | sort >go_deps.txt
-
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
-          nix path-info -r --derivation . | grep -v '\.drv' | sort >all_deps.txt
-          comm -23 all_deps.txt go_deps.txt \
-            | xargs sudo $(command -v nix) copy --to file://${{ runner.temp }}/nix-cache
-
-      - name: Copy go dependencies to cache
-        if: steps.go-cache.outputs.cache-hit != 'true'
-        run: |
-          xargs sudo $(command -v nix) copy --to file://${{ runner.temp }}/go-cache <go_deps.txt
+          xargs nix copy --to file://${{ runner.temp }}/nix-cache <'${{ github.workspace }}/.github/built_paths'

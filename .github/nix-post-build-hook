@@ -1,7 +1,2 @@
 #!/bin/sh
-set -eu
-set -f
-export IFS=' '
-
-# shellcheck disable=SC2086
-printf '%s\n' $OUT_PATHS >"${0%/*}/built_paths"
+printf '%s\n' "$OUT_PATHS" >"${0%/*}/built_paths"
