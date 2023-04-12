@@ -28,7 +28,7 @@ jobs:
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
-      - run: pstree -pas $(pgrep -fa nix)
+      - run: pstree -pas $(pgrep nix)
 
       - run: nix -L build
 
