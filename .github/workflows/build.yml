@@ -17,6 +17,10 @@ jobs:
           path: ${{ runner.temp }}/nix-cache
           key: ${{ runner.os }}-${{ hashFiles('./flake.lock') }}-2
 
+      - name: Configure Nix post-build hook
+        if: steps.nix-cache.outputs.cache-hit != 'true'
+        run: printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
+
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
@@ -27,17 +31,11 @@ jobs:
           extra_nix_config: |
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
+            post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook
 
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
         run: nix copy --derivation --from ${{ runner.temp }}/nix-cache .
-
-      - name: Configure Nix post-build hook
-        if: steps.nix-cache.outputs.cache-hit != 'true'
-        run: |
-          printf 'post-build-hook = %s\n' "$GITHUB_WORKSPACE"/.github/nix-post-build-hook \
-            | sudo tee -a /etc/nix/nix.conf >/dev/null \
-          && printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
 
       - run: ls -al ${{ runner.temp }}/nix-cache || true
       - run: nix -L build
