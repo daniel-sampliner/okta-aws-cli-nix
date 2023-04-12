@@ -29,9 +29,9 @@ jobs:
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
+            post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
-            post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook
 
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
