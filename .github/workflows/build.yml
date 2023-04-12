@@ -5,5 +5,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v20
+      - run: nix registry add nixpkgs github:nixos/nixpkgs/nixos-22.11
       - run: nix -L build
-      - run: file result/bin/okta-aws-cli
+      - name: validate
+        run: |
+          ./result/bin/okta-aws-cli --help 2>&1 \
+            | grep -wF -- '--all-profiles'
