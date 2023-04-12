@@ -20,13 +20,7 @@ jobs:
         with:
           extra_nix_config: |
             secret-key-files = /tmp/nix-private-key
-            trusted-public-keys = ${{ vars.NIX_PUBLIC_KEY }}
-
-      - run: nix registry add nixpkgs github:nixos/nixpkgs/nixos-22.11
-
-      - run: |
-          nix registry list | grep nixpkgs
-          nix flake metadata
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
       - run: nix -L build
 
