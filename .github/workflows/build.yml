@@ -14,12 +14,12 @@ jobs:
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
-        run: printf '%s\n' "$NIX_PRIVATE_KEY" > /nix-private-key
+        run: printf '%s\n' "$NIX_PRIVATE_KEY" > /tmp/nix-private-key
           
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
-            secret-key-files = /nix-private-key
+            secret-key-files = /tmp/nix-private-key
             trusted-public-keys = ${{ env.NIX_PUBLIC_KEY }}
 
       - run: nix registry add nixpkgs github:nixos/nixpkgs/nixos-22.11
