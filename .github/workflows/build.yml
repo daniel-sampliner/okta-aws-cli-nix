@@ -43,4 +43,6 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
+          sudo mkdir -p /home/nix-cache
+          sudo chown "$USER" /home/nix-cache
           nix copy --to /home/nix-cache .
