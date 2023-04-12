@@ -15,7 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-1
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-2
 
       - name: Save signing key secret to file
         run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >'${{ runner.temp }}/nix-private-key'
