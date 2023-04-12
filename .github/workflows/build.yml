@@ -40,7 +40,6 @@ jobs:
       - run: ls -al ${{ runner.temp }}/nix-cache || true
       - run: nix -L build
       - run: ls -al ${{ runner.temp }}/nix-cache || true
-      - run: cat /tmp/nix-post-build-hook.log || true
 
       - name: Sanity Check
         run: |

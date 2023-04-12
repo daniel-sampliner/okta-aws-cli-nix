@@ -1,6 +1,5 @@
 #!/bin/sh
 set -x
-exec >/tmp/nix-post-build-hook.log 2>&1
 
 set -eu
 
