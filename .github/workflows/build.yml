@@ -36,7 +36,7 @@ jobs:
 
       - run: |
           nix path-info -r . | xargs -n1 nix path-info --sigs
-          nix store repair -r .
+          sudo nix store repair -r .
           nix path-info -r . | xargs -n1 nix path-info --sigs
 
       - name: Sanity Check
