@@ -18,6 +18,6 @@ export PATH="/nix/var/nix/profiles/default/bin:$PATH"
 
 # shellcheck disable=SC2086
 if ! nix copy --to "$cache" $OUT_PATHS; then
-	nix repair -r $OUT_PATHS \
+	nix store repair -r $OUT_PATHS \
 		&& nix copy --to "$cache" $OUT_PATHS
 fi
