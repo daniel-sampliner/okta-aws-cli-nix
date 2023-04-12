@@ -35,6 +35,7 @@ jobs:
       - name: Configure Nix post-build hook
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run:
+          declare -p GITHUB_WORKSPACE &&
           printf 'post-build-hook = %s\n' "$GITHUB_WORKSPACE"/.github/nix-post-build-hook \
             | sudo tee -a /etc/nix/nix.conf >/dev/null \
           && printf '${{ runner.temp }}\n' >"$GITHUB_WORKSPACE"/.github/cache_location
