@@ -8,8 +8,6 @@ jobs:
           - ubuntu-latest
           - macos-latest
     runs-on: ${{ matrix.os }}
-    env:
-      RUNNER_TEMP: ${{ runner.temp }}
     steps:
       - uses: actions/checkout@v3
 
@@ -22,7 +20,7 @@ jobs:
       - name: Save signing key secret to file
         env:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
-        run: printf '%s\n' "$NIX_PRIVATE_KEY" > "$RUNNER_TEMP"/nix-private-key
+        run: printf '%s\n' "$NIX_PRIVATE_KEY" > ${{ runner.temp }}/nix-private-key
 
       - uses: cachix/install-nix-action@v20
         with:
@@ -32,7 +30,7 @@ jobs:
 
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
-        run: nix copy --from "$RUNNER_TEMP"/nix-cache .
+        run: nix copy --from ${{ runner.temp }}/nix-cache .
 
       - run: nix -L build
 
@@ -45,4 +43,4 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
           sudo $(command -v nix) store repair -r .
-          nix copy --to "$RUNNER_TEMP"/nix-cache .
+          nix copy --to ${{runner.temp }}/nix-cache .
