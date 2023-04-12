@@ -28,6 +28,8 @@ jobs:
             secret-key-files = /tmp/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
+      - run: cat /etc/nix/nix.conf
+
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
         run: nix copy --from /tmp/nix-cache .

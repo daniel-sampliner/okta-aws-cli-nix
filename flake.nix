@@ -1,6 +1,8 @@
 {
   description = "okta-aws-cli";
 
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+
   inputs.devshell.url = "github:numtide/devshell";
   inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
   inputs.devshell.inputs.flake-utils.follows = "flake-utils";
