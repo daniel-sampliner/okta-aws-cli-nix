@@ -8,6 +8,7 @@
 , golint
 , gotools
 
+, shortRev
 , src
 , version
 }:
@@ -25,4 +26,13 @@ buildGoApplication {
     golint
     gotools
   ];
+
+  postPatch = ''
+    sed -i -E '/^[[:blank:]]+Version = /s/ "(.*)"$/ "\1-g${shortRev}"/' internal/config/config.go
+  '';
+
+  postCheck = ''
+    "$GOPATH"/bin/okta-aws-cli --version \
+      | grep -q -- '^okta-aws-cli version .*-g${shortRev}$'
+  '';
 }

@@ -48,6 +48,7 @@
           pkgs.callPackage ./. {
             inherit (gomod2nix-builder) buildGoApplication;
             inherit src version;
+            inherit (src) shortRev;
           };
 
         devshell = import "${inputs.devshell}" { nixpkgs = pkgs; };
