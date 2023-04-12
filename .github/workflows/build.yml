@@ -16,7 +16,7 @@ jobs:
           NIX_PRIVATE_KEY: ${{ secrets.NIX_PRIVATE_KEY }}
         run: printf '%s\n' "$NIX_PRIVATE_KEY" > /tmp/nix-private-key
 
-      - run: cat /tmp/nix-private-key
+      - run: env
           
       - uses: cachix/install-nix-action@v20
         with:
