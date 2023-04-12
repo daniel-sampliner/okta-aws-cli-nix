@@ -19,7 +19,7 @@ jobs:
 
       - name: Configure Nix post-build hook
         if: steps.nix-cache.outputs.cache-hit != 'true'
-        run: printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
+        run: printf '${{ runner.temp }}/nix-cache\n' >${{ github.workspace }}/.github/cache_location
 
       - name: Save signing key secret to file
         run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >${{ runner.temp }}/nix-private-key
@@ -34,8 +34,6 @@ jobs:
       - name: Import Nix store cache
         if: steps.nix-cache.outputs.cache-hit == 'true'
         run: nix copy --derivation --from ${{ runner.temp }}/nix-cache .
-
-      - run: command -v nix && false
 
       - run: ls -al ${{ runner.temp }}/nix-cache || true
       - run: nix -L build
