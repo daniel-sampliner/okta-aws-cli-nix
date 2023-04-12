@@ -39,10 +39,10 @@ jobs:
             | sudo tee -a /etc/nix/nix.conf >/dev/null \
           && printf '${{ runner.temp }}/nix-cache\n' >"$GITHUB_WORKSPACE"/.github/cache_location
 
-      - run: ls -al ${{ runner.temp }}/nix-cache
+      - run: ls -al ${{ runner.temp }}/nix-cache || true
       - run: nix -L build
-      - run: ls -al ${{ runner.temp }}/nix-cache
-      - run: cat /tmp/nix-post-build-hook.log
+      - run: ls -al ${{ runner.temp }}/nix-cache || true
+      - run: cat /tmp/nix-post-build-hook.log || true
 
       - name: Sanity Check
         run: |
