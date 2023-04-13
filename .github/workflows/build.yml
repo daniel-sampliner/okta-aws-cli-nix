@@ -15,7 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-5
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-6
 
       - name: Save signing key secret to file
         run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >'${{ runner.temp }}/nix-private-key'
@@ -28,23 +28,23 @@ jobs:
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
 
-      - name: Enable post-build-hook
-        if: steps.nix-cache.outputs.cache-hit != 'true'
-        run: |
-          printf 'post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook' \
-            | sudo tee -a /etc/nix/nix.conf >/dev/null
+            # - name: Enable post-build-hook
+            #   if: steps.nix-cache.outputs.cache-hit != 'true'
+            #   run: |
+            #     printf 'post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook' \
+            #       | sudo tee -a /etc/nix/nix.conf >/dev/null
 
-          case '${{ runner.os }}' in
-          Linux)
-            sudo systemctl restart nix-daemon
-            ;;
-          macOS)
-            sudo launchctl kickstart -k system/org.nixos.nix-daemon
-            ;;
-          *)
-            printf 'unknown OS: %s\n' '${{ runner.os }}' >&2
-            exit 1
-          esac
+            #     case '${{ runner.os }}' in
+            #     Linux)
+            #       sudo systemctl restart nix-daemon
+            #       ;;
+            #     macOS)
+            #       sudo launchctl kickstart -k system/org.nixos.nix-daemon
+            #       ;;
+            #     *)
+            #       printf 'unknown OS: %s\n' '${{ runner.os }}' >&2
+            #       exit 1
+            #     esac
 
       - run: nix -L build
 
@@ -56,6 +56,11 @@ jobs:
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          xargs -t sudo $(command -v nix) copy \
-            --to file://${{ runner.temp }}/nix-cache \
-            <'${{ github.workspace }}/.github/built_paths'
+          sudo $(command -v nix) store repair -r .
+
+          {
+            printf '.\n'
+            nix path-info -r .#packages.$(nix eval --impure --expr 'builtins.currentSystem').default.passthru.vendorEnv
+          } \
+            | xargs -t sudo $(command -v nix) copy \
+              --to file://${{ runner.temp }}/nix-cache \
