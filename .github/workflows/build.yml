@@ -63,10 +63,9 @@ jobs:
             TS=tsp
           fi
 
-          ps -F -C "$TS"
-          "$TS" -l | {
+          sudo "$TS" -l | {
             read -r rest
             while read -r id rest; do
-              "$TS" -c "$id"
+              sudo "$TS" -c "$id"
             done
           }
