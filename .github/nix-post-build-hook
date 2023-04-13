@@ -5,7 +5,12 @@ if [ -z "$cache" ]; then
 	exit 0
 fi
 
+TS=ts
+if ! command -v "$TS" >/dev/null; then
+	TS=tsp
+fi
+
 export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-xargs -t ts nix copy --to "file://$cache" <<-EOF
+xargs -t "$TS" nix copy --to "file://$cache" <<-EOF
 	$OUT_PATHS
 EOF
