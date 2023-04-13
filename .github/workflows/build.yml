@@ -15,7 +15,7 @@ jobs:
         id: nix-cache
         with:
           path: ${{ runner.temp }}/nix-cache
-          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-7
+          key: ${{ runner.os }}-${{ hashFiles('./flake.lock', './gomod2nix.toml') }}-8
 
       - name: Save signing key secret to file
         run: printf '${{ secrets.NIX_PRIVATE_KEY }}\n' >'${{ runner.temp }}/nix-private-key'
@@ -41,8 +41,6 @@ jobs:
           {
             printf '.\n'
             nix path-info -r .#packages.$(nix eval --impure --expr 'builtins.currentSystem').default.passthru.vendorEnv
-          } >'${{ runner.temp }}/packages'
-          xargs -t sudo $(command -v nix) store repair -r <'${{ runner.temp }}/packages'
-          xargs -t sudo $(command -v nix) copy \
+          } \
+            | xargs -t sudo $(command -v nix) copy \
               --to file://${{ runner.temp }}/nix-cache \
-              <'${{ runner.temp }}/packages'
