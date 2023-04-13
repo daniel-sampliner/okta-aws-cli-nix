@@ -1,2 +1,11 @@
 #!/bin/sh
-printf '%s\n' "$OUT_PATHS" >>"${0%/*}/built_paths"
+
+read -r cache <"${0%/*}/cache_location"
+if [ -z "$cache" ]; then
+	exit 0
+fi
+
+export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+xargs -t ts nix copy --to "file://$cache" <<-EOF
+	$OUT_PATHS
+EOF

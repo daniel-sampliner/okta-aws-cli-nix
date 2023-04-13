@@ -30,14 +30,17 @@ jobs:
       - name: Enable post-build-hook
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
+          printf '${{ runner.temp }}/nix-cache\n' >'${{ github.workspace}}/.github/cache_location'
           printf 'post-build-hook = ${{ github.workspace }}/.github/nix-post-build-hook' \
             | sudo tee -a /etc/nix/nix.conf >/dev/null
 
           case '${{ runner.os }}' in
           Linux)
+            sudo apt update && sudo apt install -y task-spooler
             sudo systemctl restart nix-daemon
             ;;
           macOS)
+            brew update && brew install task-spooler
             sudo launchctl kickstart -k system/org.nixos.nix-daemon
             ;;
           *)
@@ -55,7 +58,9 @@ jobs:
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          sudo $(command -v nix) store repair -r .
-          xargs -t sudo $(command -v nix) copy \
-            --to file://${{ runner.temp }}/nix-cache \
-            <'${{ github.workspace }}/.github/built_paths'
+          ts -l | {
+            read -r rest
+            while read -r id rest; do
+              ts -c "$id"
+            done
+          }
