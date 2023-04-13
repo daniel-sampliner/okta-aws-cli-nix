@@ -55,7 +55,6 @@ jobs:
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          sudo $(command -v nix) store repair -r .
           xargs -t sudo $(command -v nix) copy \
             --to file://${{ runner.temp }}/nix-cache \
             <'${{ github.workspace }}/.github/built_paths'
