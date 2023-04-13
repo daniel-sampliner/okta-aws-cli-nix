@@ -23,6 +23,7 @@ jobs:
       - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
+            auto-optimise-store = true
             extra-substituters = file://${{ runner.temp }}/nix-cache
             secret-key-files = ${{ runner.temp }}/nix-private-key
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ vars.NIX_PUBLIC_KEY }}
