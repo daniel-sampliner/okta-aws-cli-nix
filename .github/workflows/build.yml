@@ -36,7 +36,7 @@ jobs:
 
           case '${{ runner.os }}' in
           Linux)
-            sudo apt update && sudo apt install -y task-spooler
+            sudo apt-get update && sudo apt-get install -y task-spooler
             sudo systemctl restart nix-daemon
             ;;
           macOS)
