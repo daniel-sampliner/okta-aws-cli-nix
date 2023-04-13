@@ -58,9 +58,15 @@ jobs:
       - name: Copy Nix dependencies to cache
         if: steps.nix-cache.outputs.cache-hit != 'true'
         run: |
-          ts -l | {
+          TS=ts
+          if ! command -v "$TS" >/dev/null; then
+            TS=tsp
+          fi
+
+          ps -F -C "$TS"
+          "$TS" -l | {
             read -r rest
             while read -r id rest; do
-              ts -c "$id"
+              "$TS" -c "$id"
             done
           }

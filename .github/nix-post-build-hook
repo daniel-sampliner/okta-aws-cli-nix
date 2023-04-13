@@ -11,6 +11,6 @@ if ! command -v "$TS" >/dev/null; then
 fi
 
 export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-xargs -t "$TS" nix copy --to "file://$cache" <<-EOF
+xargs -t "$TS" nix copy --to "file://$cache" <<-EOF >/dev/null
 	$OUT_PATHS
 EOF
