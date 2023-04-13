@@ -58,5 +58,4 @@ jobs:
           sudo $(command -v nix) store repair -r .
           xargs -t sudo $(command -v nix) copy \
             --to file://${{ runner.temp }}/nix-cache \
-            --no-recursive \
             <'${{ github.workspace }}/.github/built_paths'
